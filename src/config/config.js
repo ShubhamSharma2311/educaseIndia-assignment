@@ -1,5 +1,5 @@
 /**
- * Application configuration
+ * Application configuration management
  */
 
 // Load environment variables if not in production
@@ -12,29 +12,34 @@ const config = {
   server: {
     port: process.env.PORT || 3000,
     env: process.env.NODE_ENV || 'development',
+    host: process.env.HOST || 'localhost'
   },
   
-  // Cors options
-  cors: {
-    origin: process.env.CORS_ORIGIN || '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+  // Database configuration (if needed separately from DATABASE_URL)
+  database: {
+    url: process.env.DATABASE_URL,
+    maxConnections: process.env.DB_MAX_CONNECTIONS || 10
   },
   
-  // API settings
+  // API configuration
   api: {
     prefix: '/api',
     version: 'v1',
+    rateLimit: {
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: process.env.RATE_LIMIT_MAX || 100 // requests per windowMs
+    }
   },
   
-  // Rate limiting to prevent abuse
-  rateLimit: {
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-  },
+  // CORS configuration
+  cors: {
+    origin: process.env.CORS_ORIGIN || '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }
 };
 
-// Build the full API base path
+// Compute derived configurations
 config.api.basePath = `${config.api.prefix}/${config.api.version}`;
 
 module.exports = config;

@@ -2,19 +2,14 @@
  * School service - handles business logic for school operations
  */
 
-const prisma = require('../lib/prisma');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 const { calculateDistance } = require('../utils/distance');
 const { ApiError } = require('../middleware/errorHandler');
 
-/**
- * School service containing business logic for school operations
- */
+
 const schoolService = {
-  /**
-   * Create a new school
-   * @param {Object} schoolData - School data (name, address, latitude, longitude)
-   * @returns {Promise<Object>} - Created school object
-   */
+  
   async createSchool(schoolData) {
     try {
       // Parse latitude and longitude to ensure they're stored as floats

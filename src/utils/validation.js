@@ -1,6 +1,33 @@
 /**
- * Validation utility functions for school-related data
+ * Validation utility functions using Zod
  */
+const z = require('zod');
+
+// School schema definition
+const schoolSchema = z.object({
+  name: z.string().min(1, { message: "School name is required" }),
+  address: z.string().min(1, { message: "Address is required" }),
+  latitude: z.coerce
+    .number()
+    .min(-90, { message: "Latitude must be between -90 and 90 degrees" })
+    .max(90, { message: "Latitude must be between -90 and 90 degrees" }),
+  longitude: z.coerce
+    .number()
+    .min(-180, { message: "Longitude must be between -180 and 180 degrees" })
+    .max(180, { message: "Longitude must be between -180 and 180 degrees" })
+});
+
+// Location schema definition
+const locationSchema = z.object({
+  latitude: z.coerce
+    .number()
+    .min(-90, { message: "Latitude must be between -90 and 90 degrees" })
+    .max(90, { message: "Latitude must be between -90 and 90 degrees" }),
+  longitude: z.coerce
+    .number()
+    .min(-180, { message: "Longitude must be between -180 and 180 degrees" })
+    .max(180, { message: "Longitude must be between -180 and 180 degrees" })
+});
 
 /**
  * Validates school input data
@@ -8,44 +35,20 @@
  * @returns {Object} - Object containing validation result and errors
  */
 function validateSchoolInput(data) {
-  const errors = [];
-
-  // Check if name is provided and is a string
-  if (!data.name || typeof data.name !== 'string' || data.name.trim() === '') {
-    errors.push('A valid school name is required');
-  }
-
-  // Check if address is provided and is a string
-  if (!data.address || typeof data.address !== 'string' || data.address.trim() === '') {
-    errors.push('A valid address is required');
-  }
-
-  // Check if latitude is provided and is a valid number
-  if (data.latitude === undefined || data.latitude === null || isNaN(parseFloat(data.latitude))) {
-    errors.push('A valid latitude is required');
+  const result = schoolSchema.safeParse(data);
+  
+  if (result.success) {
+    return {
+      isValid: true,
+      errors: [],
+      data: result.data // Returns parsed and type-converted data
+    };
   } else {
-    // Check latitude range (-90 to 90)
-    const lat = parseFloat(data.latitude);
-    if (lat < -90 || lat > 90) {
-      errors.push('Latitude must be between -90 and 90 degrees');
-    }
+    return {
+      isValid: false,
+      errors: result.error.errors.map(err => `${err.path.join('.')}: ${err.message}`)
+    };
   }
-
-  // Check if longitude is provided and is a valid number
-  if (data.longitude === undefined || data.longitude === null || isNaN(parseFloat(data.longitude))) {
-    errors.push('A valid longitude is required');
-  } else {
-    // Check longitude range (-180 to 180)
-    const lon = parseFloat(data.longitude);
-    if (lon < -180 || lon > 180) {
-      errors.push('Longitude must be between -180 and 180 degrees');
-    }
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors: errors
-  };
 }
 
 /**
@@ -54,34 +57,20 @@ function validateSchoolInput(data) {
  * @returns {Object} - Object containing validation result and errors
  */
 function validateLocationInput(data) {
-  const errors = [];
-
-  // Check if latitude is provided and is a valid number
-  if (data.latitude === undefined || data.latitude === null || isNaN(parseFloat(data.latitude))) {
-    errors.push('A valid latitude is required');
+  const result = locationSchema.safeParse(data);
+  
+  if (result.success) {
+    return {
+      isValid: true,
+      errors: [],
+      data: result.data // Returns parsed and type-converted data
+    };
   } else {
-    // Check latitude range (-90 to 90)
-    const lat = parseFloat(data.latitude);
-    if (lat < -90 || lat > 90) {
-      errors.push('Latitude must be between -90 and 90 degrees');
-    }
+    return {
+      isValid: false,
+      errors: result.error.errors.map(err => `${err.path.join('.')}: ${err.message}`)
+    };
   }
-
-  // Check if longitude is provided and is a valid number
-  if (data.longitude === undefined || data.longitude === null || isNaN(parseFloat(data.longitude))) {
-    errors.push('A valid longitude is required');
-  } else {
-    // Check longitude range (-180 to 180)
-    const lon = parseFloat(data.longitude);
-    if (lon < -180 || lon > 180) {
-      errors.push('Longitude must be between -180 and 180 degrees');
-    }
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors: errors
-  };
 }
 
 module.exports = {

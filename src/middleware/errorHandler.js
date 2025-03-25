@@ -1,28 +1,17 @@
-/**
- * Global error handling middleware
- */
-
-/**
- * Error handler middleware to provide consistent error responses
- */
 function errorHandler(err, req, res, next) {
   console.error('Error:', err);
 
-  // Determine status code
   const statusCode = err.statusCode || 500;
   
-  // Base error response
   const errorResponse = {
     success: false,
     message: err.message || 'An unexpected error occurred',
   };
 
-  // Add validation errors if available
   if (err.errors) {
     errorResponse.errors = err.errors;
   }
 
-  // Only add stack trace in development environment
   if (process.env.NODE_ENV === 'development') {
     errorResponse.stack = err.stack;
   }
@@ -30,9 +19,6 @@ function errorHandler(err, req, res, next) {
   res.status(statusCode).json(errorResponse);
 }
 
-/**
- * Custom error class for API errors
- */
 class ApiError extends Error {
   constructor(message, statusCode, errors = null) {
     super(message);

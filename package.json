@@ -1,9 +1,11 @@
 {
   "name": "educase-india-assignment",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +19,12 @@
     "express-rate-limit": "^7.5.0",
     "helmet": "^8.1.0",
     "morgan": "^1.10.0",
-    "prisma": "^6.5.0"
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "prisma": "^6.5.0",
+    "supertest": "^7.1.0"
   }
 }
